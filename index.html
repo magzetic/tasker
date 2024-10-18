@@ -4,8 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Management Tool</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest/dist/umd/supabase.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Contact Management Tool</h1>
+    
+    <div id="auth-section">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <h2>Log In</h2>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+
+    <div id="contact-section">
+        <h2>Manage Contacts</h2>
+        <form id="contact-form">
+            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="mobile-number" placeholder="Mobile Number">
+            <input type="text" id="task" placeholder="Task">
+            <input type="number" id="amount" placeholder="Amount">
+            <input type="date" id="deadline" placeholder="Deadline">
+            <input type="text" id="remark1" placeholder="Remark 1">
+            <input type="text" id="remark2" placeholder="Remark 2">
+            <input type="text" id="remark3" placeholder="Remark 3">
+            <input type="text" id="village" placeholder="Village">
+            <button type="submit" id="add-button">Add Contact</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Task</th>
+                    <th>Amount</th>
+                    <th>Deadline Date</th>
+                    <th>Remark 1</th>
+                    <th>Remark 2</th>
+                    <th>Remark 3</th>
+                    <th>Village</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="contacts-table-body"></tbody>
+        </table>
+    </div>
+
     <script type="module">
         const SUPABASE_URL = 'https://qnefthbdtiwgwjjxxeey.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWZ0aGJkdGl3Z3dqanh4ZWV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkyNjg0NzUsImV4cCI6MjA0NDg0NDQ3NX0.uZS02X8G7GAkoGuvmYVmhEuQY9VrFwmqXwLRbdeboHQ';
@@ -35,7 +88,7 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
-            const { user, error } = await supabaseClient.auth.signIn({ email, password });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
                 console.error('Error logging in:', error);
                 alert('Error logging in: ' + error.message);
@@ -172,76 +225,5 @@
             document.getElementById('contact-section').style.display = 'none'; // Hide contact section initially
         };
     </script>
-</head>
-<body>
-    <div class="container">
-        <div id="auth-section">
-            <h1>Contact Management Tool</h1>
-
-            <h2>Sign Up</h2>
-            <form id="signup-form">
-                <label for="signup-email">Email:</label>
-                <input type="email" id="signup-email" required placeholder="Enter Email">
-                <label for="signup-password">Password:</label>
-                <input type="password" id="signup-password" required placeholder="Enter Password">
-                <button type="submit">Sign Up</button>
-            </form>
-
-            <h2>Log In</h2>
-            <form id="login-form">
-                <label for="login-email">Email:</label>
-                <input type="email" id="login-email" required placeholder="Enter Email">
-                <label for="login-password">Password:</label>
-                <input type="password" id="login-password" required placeholder="Enter Password">
-                <button type="submit">Log In</button>
-            </form>
-        </div>
-
-        <div id="contact-section">
-            <h2>Add or Edit Contact</h2>
-            <form id="contact-form">
-                <label for="name">Name:</label>
-                <input type="text" id="name" placeholder="Enter Name" required>
-                <label for="mobile-number">Mobile Number:</label>
-                <input type="text" id="mobile-number" placeholder="Enter Mobile Number" required>
-                <label for="task">Task:</label>
-                <input type="text" id="task" placeholder="Enter Task">
-                <label for="amount">Amount:</label>
-                <input type="text" id="amount" placeholder="Enter Amount">
-                <label for="deadline">Deadline Date:</label>
-                <input type="date" id="deadline">
-                <label for="remark1">Remark 1:</label>
-                <input type="text" id="remark1" placeholder="Enter Remark 1">
-                <label for="remark2">Remark 2:</label>
-                <input type="text" id="remark2" placeholder="Enter Remark 2">
-                <label for="remark3">Remark 3:</label>
-                <input type="text" id="remark3" placeholder="Enter Remark 3">
-                <label for="village">Village:</label>
-                <input type="text" id="village" placeholder="Enter Village">
-                <button type="submit" id="add-button">Add Contact</button>
-            </form>
-
-            <h2>Contacts</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Mobile Number</th>
-                        <th>Task</th>
-                        <th>Amount</th>
-                        <th>Deadline Date</th>
-                        <th>Remark 1</th>
-                        <th>Remark 2</th>
-                        <th>Remark 3</th>
-                        <th>Village</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="contacts-table-body">
-                    <!-- Contacts will be dynamically inserted here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 </body>
 </html>
