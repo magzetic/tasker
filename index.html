@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Management Tool</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest/dist/umd/supabase.js"></script>
     <script type="module">
-        // Import Supabase client from CDN
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/esm/index.js';
-
         // Hard-coded Supabase URL and Key
         const SUPABASE_URL = 'https://qnefthbdtiwgwjjxxeey.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWZ0aGJkdGl3Z3dqanh4ZWV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkyNjg0NzUsImV4cCI6MjA0NDg0NDQ3NX0.uZS02X8G7GAkoGuvmYVmhEuQY9VrFwmqXwLRbdeboHQ';
 
         // Initialize Supabase client
+        const { createClient } = supabase;
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Function to add a new contact
