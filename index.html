@@ -7,67 +7,81 @@
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest/dist/umd/supabase.js"></script>
     <script type="module">
-        // Hard-coded Supabase URL and Key
         const SUPABASE_URL = 'https://qnefthbdtiwgwjjxxeey.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWZ0aGJkdGl3Z3dqanh4ZWV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkyNjg0NzUsImV4cCI6MjA0NDg0NDQ3NX0.uZS02X8G7GAkoGuvmYVmhEuQY9VrFwmqXwLRbdeboHQ';
 
-        // Initialize Supabase client
         const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY); // Changed variable name to supabaseClient
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Function to sign up a new user
+        async function signUp(event) {
+            event.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            const { user, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) {
+                console.error('Error signing up:', error);
+                alert('Error signing up: ' + error.message);
+            } else {
+                alert('Sign up successful! Please check your email for confirmation.');
+                document.getElementById('signup-form').reset();
+            }
+        }
+
+        // Function to log in an existing user
+        async function logIn(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const { user, error } = await supabaseClient.auth.signIn({ email, password });
+            if (error) {
+                console.error('Error logging in:', error);
+                alert('Error logging in: ' + error.message);
+            } else {
+                alert('Login successful!');
+                document.getElementById('login-form').reset();
+                document.getElementById('contact-section').style.display = 'block';
+                document.getElementById('auth-section').style.display = 'none';
+                displayContacts(); // Load contacts after login
+            }
+        }
 
         // Function to add a new contact
         async function addContact(event) {
             event.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const mobileNumber = document.getElementById('mobile-number').value;
-            const task = document.getElementById('task').value;
-            const amount = document.getElementById('amount').value;
-            const deadline = document.getElementById('deadline').value;
-            const remark1 = document.getElementById('remark1').value;
-            const remark2 = document.getElementById('remark2').value;
-            const remark3 = document.getElementById('remark3').value;
-            const village = document.getElementById('village').value;
-
             const contact = {
-                name,
-                mobile_number: mobileNumber,
-                task,
-                amount,
-                deadline_date: deadline,
-                remark1,
-                remark2,
-                remark3,
-                village
+                name: document.getElementById('name').value,
+                mobile_number: document.getElementById('mobile-number').value,
+                task: document.getElementById('task').value,
+                amount: document.getElementById('amount').value,
+                deadline_date: document.getElementById('deadline').value,
+                remark1: document.getElementById('remark1').value,
+                remark2: document.getElementById('remark2').value,
+                remark3: document.getElementById('remark3').value,
+                village: document.getElementById('village').value
             };
 
-            const { data, error } = await supabaseClient
-                .from('contacts')
-                .insert([contact]);
-            
+            const { data, error } = await supabaseClient.from('contacts').insert([contact]);
             if (error) {
                 console.error('Error adding contact:', error);
                 alert('Error adding contact: ' + error.message);
             } else {
-                console.log('Contact added:', data);
                 alert('Contact added successfully!');
-                document.getElementById('contact-form').reset(); // Reset form after submission
-                displayContacts(); // Refresh the contact list
+                document.getElementById('contact-form').reset();
+                displayContacts();
             }
         }
 
         // Function to fetch all contacts
         async function fetchContacts() {
-            const { data, error } = await supabaseClient
-                .from('contacts')
-                .select('*');
-            
+            const { data, error } = await supabaseClient.from('contacts').select('*');
             if (error) {
                 console.error('Error fetching contacts:', error);
                 return [];
-            } else {
-                return data;
             }
+            return data;
         }
 
         // Function to display contacts in the table
@@ -88,72 +102,146 @@
                     <td>${contact.remark2 || ''}</td>
                     <td>${contact.remark3 || ''}</td>
                     <td>${contact.village || ''}</td>
+                    <td>
+                        <button onclick="editContact(${contact.id}, '${contact.name}', '${contact.mobile_number}', '${contact.task}', '${contact.amount}', '${contact.deadline_date}', '${contact.remark1}', '${contact.remark2}', '${contact.remark3}', '${contact.village}')">Edit</button>
+                        <button onclick="deleteContact(${contact.id})">Delete</button>
+                    </td>
                 `;
                 contactsTable.appendChild(row);
             });
         }
 
-        // Event listener for form submission
+        // Function to edit a contact
+        async function editContact(id, name, mobileNumber, task, amount, deadline, remark1, remark2, remark3, village) {
+            document.getElementById('name').value = name;
+            document.getElementById('mobile-number').value = mobileNumber;
+            document.getElementById('task').value = task;
+            document.getElementById('amount').value = amount;
+            document.getElementById('deadline').value = deadline;
+            document.getElementById('remark1').value = remark1;
+            document.getElementById('remark2').value = remark2;
+            document.getElementById('remark3').value = remark3;
+            document.getElementById('village').value = village;
+
+            const addButton = document.getElementById('add-button');
+            addButton.textContent = 'Update Contact';
+            addButton.onclick = async function () {
+                const updatedContact = {
+                    name: document.getElementById('name').value,
+                    mobile_number: document.getElementById('mobile-number').value,
+                    task: document.getElementById('task').value,
+                    amount: document.getElementById('amount').value,
+                    deadline_date: document.getElementById('deadline').value,
+                    remark1: document.getElementById('remark1').value,
+                    remark2: document.getElementById('remark2').value,
+                    remark3: document.getElementById('remark3').value,
+                    village: document.getElementById('village').value
+                };
+
+                const { data, error } = await supabaseClient.from('contacts').update(updatedContact).eq('id', id);
+                if (error) {
+                    console.error('Error updating contact:', error);
+                    alert('Error updating contact: ' + error.message);
+                } else {
+                    alert('Contact updated successfully!');
+                    addButton.textContent = 'Add Contact';
+                    addButton.onclick = addContact;
+                    document.getElementById('contact-form').reset();
+                    displayContacts();
+                }
+            };
+        }
+
+        // Function to delete a contact
+        async function deleteContact(id) {
+            const { data, error } = await supabaseClient.from('contacts').delete().eq('id', id);
+            if (error) {
+                console.error('Error deleting contact:', error);
+                alert('Error deleting contact: ' + error.message);
+            } else {
+                alert('Contact deleted successfully!');
+                displayContacts();
+            }
+        }
+
+        // Event listener for form submissions
         window.onload = async () => {
+            document.getElementById('signup-form').addEventListener('submit', signUp);
+            document.getElementById('login-form').addEventListener('submit', logIn);
             document.getElementById('contact-form').addEventListener('submit', addContact);
-            await displayContacts(); // Load contacts when the page loads
+            document.getElementById('contact-section').style.display = 'none'; // Hide contact section initially
         };
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Contact Management Tool</h1>
+        <div id="auth-section">
+            <h1>Contact Management Tool</h1>
 
-        <form id="contact-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" placeholder="Enter Name">
-            
-            <label for="mobile-number">Mobile Number:</label>
-            <input type="text" id="mobile-number" placeholder="Enter Mobile Number">
-            
-            <label for="task">Task:</label>
-            <input type="text" id="task" placeholder="Enter Task">
-            
-            <label for="amount">Amount:</label>
-            <input type="text" id="amount" placeholder="Enter Amount">
-            
-            <label for="deadline">Deadline Date:</label>
-            <input type="date" id="deadline">
-            
-            <label for="remark1">Remark 1:</label>
-            <input type="text" id="remark1" placeholder="Enter Remark 1">
-            
-            <label for="remark2">Remark 2:</label>
-            <input type="text" id="remark2" placeholder="Enter Remark 2">
-            
-            <label for="remark3">Remark 3:</label>
-            <input type="text" id="remark3" placeholder="Enter Remark 3">
-            
-            <label for="village">Village:</label>
-            <input type="text" id="village" placeholder="Enter Village">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" required placeholder="Enter Email">
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" required placeholder="Enter Password">
+                <button type="submit">Sign Up</button>
+            </form>
 
-            <button type="submit">Add Contact</button>
-        </form>
+            <h2>Log In</h2>
+            <form id="login-form">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" required placeholder="Enter Email">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" required placeholder="Enter Password">
+                <button type="submit">Log In</button>
+            </form>
+        </div>
 
-        <h2>Contacts</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Mobile Number</th>
-                    <th>Task</th>
-                    <th>Amount</th>
-                    <th>Deadline Date</th>
-                    <th>Remark 1</th>
-                    <th>Remark 2</th>
-                    <th>Remark 3</th>
-                    <th>Village</th>
-                </tr>
-            </thead>
-            <tbody id="contacts-table-body">
-                <!-- Contacts will be dynamically inserted here -->
-            </tbody>
-        </table>
+        <div id="contact-section">
+            <h2>Add or Edit Contact</h2>
+            <form id="contact-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter Name" required>
+                <label for="mobile-number">Mobile Number:</label>
+                <input type="text" id="mobile-number" placeholder="Enter Mobile Number" required>
+                <label for="task">Task:</label>
+                <input type="text" id="task" placeholder="Enter Task">
+                <label for="amount">Amount:</label>
+                <input type="text" id="amount" placeholder="Enter Amount">
+                <label for="deadline">Deadline Date:</label>
+                <input type="date" id="deadline">
+                <label for="remark1">Remark 1:</label>
+                <input type="text" id="remark1" placeholder="Enter Remark 1">
+                <label for="remark2">Remark 2:</label>
+                <input type="text" id="remark2" placeholder="Enter Remark 2">
+                <label for="remark3">Remark 3:</label>
+                <input type="text" id="remark3" placeholder="Enter Remark 3">
+                <label for="village">Village:</label>
+                <input type="text" id="village" placeholder="Enter Village">
+                <button type="submit" id="add-button">Add Contact</button>
+            </form>
+
+            <h2>Contacts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Mobile Number</th>
+                        <th>Task</th>
+                        <th>Amount</th>
+                        <th>Deadline Date</th>
+                        <th>Remark 1</th>
+                        <th>Remark 2</th>
+                        <th>Remark 3</th>
+                        <th>Village</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="contacts-table-body">
+                    <!-- Contacts will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
