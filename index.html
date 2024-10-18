@@ -13,7 +13,7 @@
 
         // Initialize Supabase client
         const { createClient } = supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY); // Changed variable name to supabaseClient
 
         // Function to add a new contact
         async function addContact(event) {
@@ -41,7 +41,7 @@
                 village
             };
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('contacts')
                 .insert([contact]);
             
@@ -58,7 +58,7 @@
 
         // Function to fetch all contacts
         async function fetchContacts() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('contacts')
                 .select('*');
             
