@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management Tool</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="app.js" defer></script> <!-- Link to your JavaScript file -->
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Management Tool</h1>
+
+        <form id="contact-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter Name">
+            
+            <label for="mobile-number">Mobile Number:</label>
+            <input type="text" id="mobile-number" placeholder="Enter Mobile Number">
+            
+            <label for="task">Task:</label>
+            <input type="text" id="task" placeholder="Enter Task">
+            
+            <label for="amount">Amount:</label>
+            <input type="text" id="amount" placeholder="Enter Amount">
+            
+            <label for="deadline">Deadline Date:</label>
+            <input type="date" id="deadline">
+            
+            <label for="remark1">Remark 1:</label>
+            <input type="text" id="remark1" placeholder="Enter Remark 1">
+            
+            <label for="remark2">Remark 2:</label>
+            <input type="text" id="remark2" placeholder="Enter Remark 2">
+            
+            <label for="remark3">Remark 3:</label>
+            <input type="text" id="remark3" placeholder="Enter Remark 3">
+            
+            <label for="village">Village:</label>
+            <input type="text" id="village" placeholder="Enter Village">
+
+            <button type="submit">Add Contact</button>
+        </form>
+
+        <h2>Contacts</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Task</th>
+                    <th>Amount</th>
+                    <th>Deadline Date</th>
+                    <th>Remark 1</th>
+                    <th>Remark 2</th>
+                    <th>Remark 3</th>
+                    <th>Village</th>
+                </tr>
+            </thead>
+            <tbody id="contacts-table-body">
+                <!-- Contacts will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
